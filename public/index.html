@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alice認証デモ</title>
+</head>
+<body>
+  <h1 id="status">トークン検証中...</h1>
+  <div id="app" style="display:none;">
+    <h2>こんにちは、私はアリス！</h2>
+    <p>これは正規のNFCタグからアクセスされたページです。</p>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    fetch(`/api/verify-token?token=${token}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Invalid');
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById('status').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+      })
+      .catch(err => {
+        document.getElementById('status').innerText = '不正なアクセスです';
+      });
+  </script>
+</body>
+</html>
