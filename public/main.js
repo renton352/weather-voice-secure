@@ -25,18 +25,32 @@ function startApp(ch, ip) {
   const apiKey = "a8bc86e4c135f3c44f72bb4b957aa213";
 
   async function fetchWeather() {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=35.6895&lon=139.6917&units=metric&lang=ja&appid=${apiKey}`;
-    console.log("[DEBUG] weatherAPI:", url);
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log("[DEBUG] weatherData:", data);
-    return {
-      temp: Math.round(data.main.temp),
-      feels_like: Math.round(data.main.feels_like),
-      weather: data.weather[0].main.toLowerCase(),
-      sunrise: data.sys.sunrise,
-      sunset: data.sys.sunset
-    };
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(async position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ja&appid=${apiKey}`;
+        console.log("[DEBUG] weatherAPI:", url);
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          console.log("[DEBUG] weatherData:", data);
+          resolve({
+            temp: Math.round(data.main.temp),
+            feels_like: Math.round(data.main.feels_like),
+            weather: data.weather[0].main.toLowerCase(),
+            sunrise: data.sys.sunrise,
+            sunset: data.sys.sunset
+          });
+        } catch (err) {
+          reject(err);
+        }
+      }, error => {
+        console.error("位置情報の取得に失敗しました", error);
+        document.body.innerHTML = "<h1>位置情報の取得に失敗しました</h1>";
+        reject(error);
+      });
+    });
   }
 
   function getTimeSlotA(hour) {
