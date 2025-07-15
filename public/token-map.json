@@ -1,5 +1,5 @@
 {
-  "abc123": { "character": "alice", "folder": "animeA" },
-  "def456": { "character": "bob", "folder": "animeA" },
-  "ghi789": { "character": "clara", "folder": "animeB" }
+  "abc123": { "character": "alice", "ip": "animeA" },
+  "def456": { "character": "bob", "ip": "animeA" },
+  "ghi789": { "character": "clara", "ip": "animeB" }
 }
