@@ -4,15 +4,15 @@ import requests
 import os
 
 # JSONLファイルの読み込み
-with open("alice_voicevox_script.jsonl", "r", encoding="utf-8") as f:
+with open("clara_voicevox_script.jsonl", "r", encoding="utf-8") as f:
     lines = [json.loads(line) for line in f]
 
 # 出力先ディレクトリ
-output_dir = "voice/alice"
+output_dir = "voice/clara"
 os.makedirs(output_dir, exist_ok=True)
 
 # 話者ID: 0 = 四国めたん（ノーマル）
-speaker_id = 0
+speaker_id = 54
 
 for entry in lines:
     text = entry["text"]
