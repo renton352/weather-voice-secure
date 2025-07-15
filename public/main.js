@@ -5,7 +5,7 @@ fetch("token-map.json")
   .then(res => res.json())
   .then(map => {
     const entry = map[token];
-    if (!entry || !entry.ip || !entry.theme) {
+    if (!entry || !entry.ip || !entry.character) {
       document.body.innerHTML = "<h1>無効なトークンです</h1>";
       throw new Error("無効なトークン");
     }
