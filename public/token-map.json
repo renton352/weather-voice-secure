@@ -1,5 +1,5 @@
 {
   "abc123": { "character": "alice", "ip": "animeA" },
-  "def456": { "character": "bob", "ip": "animeA" },
-  "ghi789": { "character": "clara", "ip": "animeB" }
+  "bob456": { "character": "bob", "ip": "animeA" },
+  "clara789": { "character": "clara", "ip": "animeB" }
 }
