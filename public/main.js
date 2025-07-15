@@ -1,14 +1,15 @@
+
 const token = new URLSearchParams(window.location.search).get("token");
 
 fetch("token-map.json")
   .then(res => res.json())
   .then(map => {
     const entry = map[token];
-    if (!entry || !entry.character || !entry.ip) {
+    if (!entry || !entry.ip || !entry.theme) {
       document.body.innerHTML = "<h1>無効なトークンです</h1>";
       throw new Error("無効なトークン");
     }
-    startApp(entry.character, entry.ip);
+    startApp(entry.ip, entry.theme);
   });
 
 function startApp(ch, ip) {
@@ -113,7 +114,7 @@ function startApp(ch, ip) {
       return lines[key]?.[values[key]] || "セリフが見つかりません";
     });
 
-    document.getElementById("line").textContent = messages.join("\\n");
+    document.getElementById("line").textContent = messages.join("\n");
 
     ["character-cover", "line", "background", "character", "temp"].forEach(id => {
       const el = document.getElementById(id);
