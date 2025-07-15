@@ -1,5 +1,5 @@
 {
-  "abc123": "alice",
-  "bob456": "bob",
-  "clara789": "clara"
+  "abc123": { "character": "alice", "folder": "animeA" },
+  "def456": { "character": "bob", "folder": "animeA" },
+  "ghi789": { "character": "clara", "folder": "animeB" }
 }

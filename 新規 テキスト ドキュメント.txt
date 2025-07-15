@@ -1,1 +1,3 @@
 https://weather-voice-secure.vercel.app/?token=abc123
+https://weather-voice-secure.vercel.app/?token=bob456
+https://weather-voice-secure.vercel.app/?token=clara789

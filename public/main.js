@@ -1,20 +1,17 @@
-
 const token = new URLSearchParams(window.location.search).get("token");
 
 fetch("token-map.json")
   .then(res => res.json())
   .then(map => {
-    const ch = map[token];
-    if (!ch) {
+    const entry = map[token];
+    if (!entry || !entry.character || !entry.ip) {
       document.body.innerHTML = "<h1>無効なトークンです</h1>";
       throw new Error("無効なトークン");
     }
-    startApp(ch);
+    startApp(entry.character, entry.ip);
   });
 
-function startApp(ch) {
-  const ip = "animeA";
-
+function startApp(ch, ip) {
   if (window.history.replaceState) {
     window.history.replaceState(null, "", location.pathname);
   }
@@ -116,7 +113,7 @@ function startApp(ch) {
       return lines[key]?.[values[key]] || "セリフが見つかりません";
     });
 
-    document.getElementById("line").textContent = messages.join("\n");
+    document.getElementById("line").textContent = messages.join("\\n");
 
     ["character-cover", "line", "background", "character", "temp"].forEach(id => {
       const el = document.getElementById(id);
