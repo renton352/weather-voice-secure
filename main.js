@@ -1,18 +1,21 @@
-// NFCタグチェック
-if (window.location.hash !== "#NfcTag") {
-  window.location.href = "denied.html";
-  throw new Error("アクセス拒否：NFCタグからのアクセスではありません");
+// トークン認証チェック
+const allowedTokens = ["abc123", "alice2025"];
+const token = new URLSearchParams(window.location.search).get("token");
+
+if (!allowedTokens.includes(token)) {
+  document.body.innerHTML = "<h1>不正なアクセスです</h1>";
+  throw new Error("無効なトークン");
 }
 
 const apiKey = "a8bc86e4c135f3c44f72bb4b957aa213";
 const params = new URLSearchParams(window.location.search);
-const ip = 
+const ip = params.get("ip") || "animeA";
+const ch = params.get("ch") || "alice";
 
 // URLからパラメータを取得した後に、アドレスバーの表示を消す
 if (window.history.replaceState) {
   window.history.replaceState(null, "", location.pathname);
-}params.get("ip") || "animeA";
-const ch = params.get("ch") || "alice";
+}
 
 const characterJsonPath = `characters/${ip}/${ch}.json`;
 const imgBasePath = `img/${ip}/`;
@@ -69,7 +72,7 @@ function getWeekdayName(date) {
 async function main() {
   const res = await fetch(characterJsonPath);
   if (!res.ok) {
-    window.location.href = "denied.html";
+    document.body.innerHTML = "<h1>キャラデータの読み込みに失敗しました</h1>";
     return;
   }
   const character = await res.json();
@@ -96,7 +99,6 @@ async function main() {
   const expression = character.expressions[timeSlotA] || `${ch}_normal.png`;
   document.getElementById("character").src = `${imgBasePath}${expression}`;
 
-  // 3カテゴリ中からランダムに2つ選んで、それぞれ1セリフ取得
   const values = {
     timeSlotA: timeSlotA,
     feelingCategory: feelingCategory,
@@ -113,36 +115,16 @@ async function main() {
 
   document.getElementById("line").textContent = messages.join("\n");
 
-  // Debug log
-  console.log("[DEBUG] Selected Categories:", selected);
-  console.log("[DEBUG] timeSlotA:", timeSlotA);
-  console.log("[DEBUG] timeSlotB:", timeSlotB);
-  console.log("[DEBUG] weekday:", weekday);
-  console.log("[DEBUG] weather:", weather);
-  console.log("[DEBUG] feelsLike:", feelsLike);
-  console.log("[DEBUG] feelingCategory:", feelingCategory);
-  console.log("[DEBUG] Lines:", messages);
-  console.log("[DEBUG] background:", bgPath);
-  
-
-
-  
-
-
   ["character-cover", "line", "background", "character", "temp"].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener("click", () => {
         const audioPath = `voice/${ip}/${ch}/${window.timeSlotA}.wav`;
-        console.log("[DEBUG] Tap detected on:", id);
-        console.log("[DEBUG] Attempting to play:", audioPath);
         const audio = new Audio(audioPath);
         audio.play().catch(e => console.warn("再生失敗:", e));
       }, { once: true });
     }
   });
-
 }
 
 main();
-
