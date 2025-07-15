@@ -1,0 +1,38 @@
+{
+  "name": "clara",
+  "expressions": {
+    "early_morning": "clara_normal.png",
+    "morning": "clara_happy.png",
+    "noon": "clara_surprised.png",
+    "afternoon": "clara_happy.png",
+    "evening": "clara_troubled.png",
+    "midnight": "clara_normal.png"
+  },
+  "lines": {
+    "timeSlotA": {
+      "early_morning": "朝ですね。ゆっくり支度しましょう。",
+      "morning": "おはようございます。今日も頑張りましょうね。",
+      "noon": "お昼ごはん、ちゃんと食べましたか？",
+      "afternoon": "午後は少し休憩を入れてくださいね。",
+      "evening": "一日お疲れさまでした。",
+      "midnight": "夜更かしはお肌の敵ですよ？"
+    },
+    "feelingCategory": {
+      "veryhot": "とても暑いですね…熱中症にお気をつけください。",
+      "hot": "少し暑い日ですね。涼しいところで過ごしましょう。",
+      "warm": "過ごしやすい気温ですね。",
+      "cool": "今日は涼しい風が心地よいですね。",
+      "cold": "寒いので、温かくしてお出かけくださいね。",
+      "verycold": "とても寒いですね。無理せず温かくしてお過ごしください。"
+    },
+    "weekday": {
+      "monday": "新しい週の始まりですね。良い一日になりますように。",
+      "tuesday": "火曜日です。ペースを保っていきましょう。",
+      "wednesday": "週の真ん中、水曜日です。無理せずいきましょうね。",
+      "thursday": "あともう少しで週末ですね。",
+      "friday": "金曜日、お疲れが出ていませんか？",
+      "saturday": "休日はリラックスして過ごしてくださいね。",
+      "sunday": "明日に備えて、ゆっくり休みましょう。"
+    }
+  }
+}

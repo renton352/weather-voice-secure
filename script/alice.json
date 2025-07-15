@@ -1,0 +1,37 @@
+{
+  "name": "alice",
+  "expressions": {
+    "early_morning": "alice_normal.png",
+    "morning": "alice_happy.png",
+    "noon": "alice_surprised.png",
+    "afternoon": "alice_happy.png",
+    "evening": "alice_troubled.png",
+    "midnight": "alice_normal.png"
+  },
+  "lines": {
+    "timeSlotA": {
+      "early_morning": "おはよう！まだちょっと眠いね。",
+      "morning": "朝から元気にいこう！",
+      "noon": "お昼ごはん楽しみだな〜♪",
+      "afternoon": "午後もがんばろうね！",
+      "evening": "もうすぐ夜だね、おつかれさま！",
+      "midnight": "遅くまで起きてて大丈夫？"
+    },
+    "feelingCategory": {
+      "veryhot": "あっついね〜！水分補給してね！",
+      "hot": "今日はちょっと暑いかも。",
+      "warm": "あったかくて気持ちいい〜",
+      "cool": "涼しくて過ごしやすいね！",
+      "cold": "さむっ！風邪ひかないようにね！"
+    },
+    "weekday": {
+      "monday": "月曜日、気合い入れてこ！",
+      "tuesday": "火曜日もがんばろう〜！",
+      "wednesday": "水曜日、もう半分だね！",
+      "thursday": "木曜日、あとひといき！",
+      "friday": "やった〜金曜日だよ♪",
+      "saturday": "土曜日はリラックスしよう〜",
+      "sunday": "日曜はのんびりしよっか♪"
+    }
+  }
+}

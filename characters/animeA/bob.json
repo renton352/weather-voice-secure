@@ -1,0 +1,38 @@
+{
+  "name": "bob",
+  "expressions": {
+    "early_morning": "bob_normal.png",
+    "morning": "bob_happy.png",
+    "noon": "bob_surprised.png",
+    "afternoon": "bob_happy.png",
+    "evening": "bob_troubled.png",
+    "midnight": "bob_normal.png"
+  },
+  "lines": {
+    "timeSlotA": {
+      "early_morning": "朝だー！今日も全力だぜ！",
+      "morning": "よっしゃ！元気にいこう！",
+      "noon": "腹減った〜、ランチタイム！",
+      "afternoon": "午後もバッチリ決めよう！",
+      "evening": "そろそろ一息入れようか！",
+      "midnight": "もうこんな時間！？夜ふかし注意！"
+    },
+    "feelingCategory": {
+      "veryhot": "灼熱！燃えるような暑さだな！",
+      "hot": "今日も暑いね〜汗が止まらん！",
+      "warm": "いい気温！動きやすい！",
+      "cool": "ちょっと涼しくて気持ちいいな",
+      "cold": "さ、寒いっ…手がかじかむ〜",
+      "verycold": "うぉっ、寒すぎ！動きたくねぇ〜！"
+    },
+    "weekday": {
+      "monday": "月曜日、やるぞおおお！",
+      "tuesday": "火曜日って一番地味じゃない？",
+      "wednesday": "週の真ん中水曜日だ！",
+      "thursday": "木曜日…あと一歩で週末！",
+      "friday": "金曜夜のこと考えるとワクワク！",
+      "saturday": "土曜日だ！遊ぶぞー！",
+      "sunday": "日曜か〜明日の準備しなきゃな"
+    }
+  }
+}
