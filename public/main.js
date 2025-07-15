@@ -8,7 +8,7 @@ fetch("token-map.json")
     const entry = map[token];
     console.log("[DEBUG] entry:", entry);
     if (!entry || !entry.ip || !entry.character) {
-      document.body.innerHTML = "<h1>無効なトークンです</h1>";
+      document.body.innerHTML = "<h1>NFCタグをスキャンしてアクセスしてください</h1>";
       throw new Error("無効なトークン");
     }
     startApp(entry.character, entry.ip);
