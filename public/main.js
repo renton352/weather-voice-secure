@@ -9,7 +9,7 @@ fetch("token-map.json")
       document.body.innerHTML = "<h1>無効なトークンです</h1>";
       throw new Error("無効なトークン");
     }
-    startApp(entry.ip, entry.theme);
+    startApp(entry.character, entry.ip);
   });
 
 function startApp(ch, ip) {
