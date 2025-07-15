@@ -2,31 +2,145 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Alice認証デモ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>推し天気予報</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+      position: relative;
+      user-select: none;
+    }
+    #background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+    }
+    img {
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+
+    #character {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 80vh;
+      z-index: 1;
+    }
+#temp {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.2em;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 5px 10px;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+#line {
+  position: fixed;
+  bottom: 3%;
+  left: 50%;  /* ← 中央に修正 */
+  transform: translateX(-50%);
+  max-width: 90%;
+  width: 80%;
+  font-size: 1em;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 16px 20px;
+  border-radius: 14px;
+  text-align: center;
+  text-shadow: 2px 2px 4px #000;
+  font-weight: bold;
+  z-index: 3;
+  line-height: 1.6em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 35%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+  
+    
+#character-cover {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: transparent;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+
+  </style>
 </head>
 <body>
-  <h1 id="status">トークン検証中...</h1>
-  <div id="app" style="display:none;">
-    <h2>こんにちは、私はアリス！</h2>
-    <p>これは正規のNFCタグからアクセスされたページです。</p>
-  </div>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+  <img id="background" src="" alt="background" />
+  <img id="character" src="" alt="character" />
+  <div id="character-cover"></div>
+  <div id="temp">気温: --℃</div>
+  <div id="line">セリフを読み込み中...</div>
 
-    fetch(`/api/verify-token?token=${token}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Invalid');
-        return res.json();
-      })
-      .then(data => {
-        document.getElementById('status').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-      })
-      .catch(err => {
-        document.getElementById('status').innerText = '不正なアクセスです';
-      });
+  <script src="main.js"></script>
+
+
+<!--
+  <script>
+    document.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+    }, false);
+
+    document.addEventListener("keydown", function (e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+        (e.ctrlKey && e.key === "U")
+      ) {
+        e.preventDefault();
+      }
+    });
   </script>
-</body>
+-->
+
+
+
+  <script>
+    // スマホの長押し防止
+    document.addEventListener("touchstart", preventLongPress, { passive: false });
+    document.addEventListener("touchend", clearLongPress, { passive: false });
+
+    let pressTimer;
+    function preventLongPress(e) {
+      pressTimer = setTimeout(() => {
+        e.preventDefault();
+      }, 500);
+    }
+
+    function clearLongPress() {
+      clearTimeout(pressTimer);
+    }
+  </script>
+
+  
+
+  </body>
 </html>
+
+
+
