@@ -62,11 +62,11 @@ function startApp(ch, ip) {
     const candidates = [];
     for (const n of names) {
       candidates.push(`${baseDir}${n}.wav`);
-      candidates.push(`${baseDir}${n}.mp3`);
+      //candidates.push(`${baseDir}${n}.mp3`);
     }
     // 最後にデフォルト
     candidates.push(`${baseDir}default.wav`);
-    candidates.push(`${baseDir}default.mp3`);
+    //candidates.push(`${baseDir}default.mp3`);
 
     for (const src of candidates) {
       if (await tryPlay(src)) return true;
