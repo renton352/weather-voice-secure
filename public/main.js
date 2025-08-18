@@ -24,6 +24,58 @@ function startApp(ch, ip) {
   const imgBasePath = `img/${ip}/`;
   const apiKey = "a8bc86e4c135f3c44f72bb4b957aa213";
 
+  // ===== Audio 再生ヘルパー =====
+  const audioEl = new Audio();
+  audioEl.preload = "none"; // 必要になったときに読み込む
+  audioEl.onerror = (e) => console.warn("[DEBUG] audio decode error:", audioEl.src, e);
+  audioEl.onplay = () => console.log("[DEBUG] Playing audio:", audioEl.src);
+
+  const timeSlotAlias = {
+    midnight: ["midnight", "night"],
+    early_morning: ["early_morning", "morning"],
+    morning: ["morning"],
+    noon: ["noon"],
+    afternoon: ["afternoon"],
+    evening: ["evening"]
+  };
+
+  async function tryPlay(src) {
+    try {
+      // 存在チェック（Vercel は HEAD 応答あり）
+      const head = await fetch(src, { method: "HEAD" });
+      if (!head.ok) {
+        console.log("[DEBUG] audio not found:", src, head.status);
+        return false;
+      }
+      audioEl.src = src;
+      audioEl.currentTime = 0;
+      await audioEl.play();
+      return true;
+    } catch (e) {
+      console.warn("[DEBUG] play failed:", src, e);
+      return false;
+    }
+  }
+
+  async function playVoiceWithFallback(baseDir, slot) {
+    const names = timeSlotAlias[slot] || [slot];
+    const candidates = [];
+    for (const n of names) {
+      candidates.push(`${baseDir}${n}.wav`);
+      candidates.push(`${baseDir}${n}.mp3`);
+    }
+    // 最後にデフォルト
+    candidates.push(`${baseDir}default.wav`);
+    candidates.push(`${baseDir}default.mp3`);
+
+    for (const src of candidates) {
+      if (await tryPlay(src)) return true;
+    }
+    console.warn("[DEBUG] 再生可能なボイスファイルが見つかりませんでした");
+    return false;
+  }
+  // ===== /Audio 再生ヘルパー =====
+
   async function fetchWeather() {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(async position => {
@@ -130,16 +182,16 @@ function startApp(ch, ip) {
     const messages = selected.map(key => lines[key]?.[values[key]] || "セリフが見つかりません");
     document.getElementById("line").textContent = messages.join("\n");
 
-    ["character-cover", "line", "background", "character", "temp"].forEach(id => {
+    // === タップ/クリックでボイス再生（回数制限なし / フォールバックあり） ===
+    const base = `voice/${ip}/${ch}/`;
+    const targets = ["character-cover", "line", "background", "character", "temp"];
+    const handler = () => playVoiceWithFallback(base, timeSlotA);
+
+    targets.forEach(id => {
       const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener("click", () => {
-          const audioPath = `voice/${ip}/${ch}/${timeSlotA}.wav`;
-          console.log("[DEBUG] Playing audio:", audioPath);
-          const audio = new Audio(audioPath);
-          audio.play().catch(e => console.warn("再生失敗:", e));
-        }, { once: true });
-      }
+      if (!el) return;
+      el.addEventListener("click", handler, { passive: true });
+      el.addEventListener("touchend", handler, { passive: true });
     });
   }
 
