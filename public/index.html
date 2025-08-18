@@ -46,6 +46,21 @@
   z-index: 2;
 }
 
+#date {
+  position: absolute;
+  right: 10px;
+  top: 48px;              /* 必要に応じて 56px/62px などに調整 */
+  font-size: 1.2em;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 5px 10px;
+  border-radius: 10px;
+  z-index: 2;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+
 #line {
   position: fixed;
   bottom: 3%;
@@ -95,6 +110,7 @@
   <img id="character" src="" alt="character" />
   <div id="character-cover"></div>
   <div id="temp">気温: --℃</div>
+  <div id="date" class="badge date"></div>
   <div id="line">セリフを読み込み中...</div>
 
   <script src="main.js"></script>

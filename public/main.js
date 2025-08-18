@@ -157,6 +157,18 @@ function startApp(ch, ip) {
     const feelingCategory = getFeelingCategory(feelsLike);
     document.getElementById("temp").textContent = `気温: ${weatherData.temp}℃`;
 
+{
+  const d = new Date();
+  const w = ["日","月","火","水","木","金","土"][d.getDay()];
+  const txt = `${d.getMonth()+1}月${d.getDate()}日(${w})`;
+  const dateEl = document.getElementById("date");
+  if (dateEl) dateEl.textContent = txt;
+}
+
+
+
+
+
     const now = new Date();
     const hour = now.getHours();
     const timeSlotA = getTimeSlotA(hour);
