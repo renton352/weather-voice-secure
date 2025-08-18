@@ -39,24 +39,23 @@ function startApp(ch, ip) {
     evening: ["evening"]
   };
 
-  async function tryPlay(src) {
-    try {
-      // 存在チェック（Vercel は HEAD 応答あり）
-      const head = await fetch(src, { method: "HEAD" });
-      if (!head.ok) {
-        console.log("[DEBUG] audio not found:", src, head.status);
-        return false;
-      }
-      audioEl.src = src;
-      audioEl.currentTime = 0;
-      await audioEl.play();
-      return true;
-    } catch (e) {
-      console.warn("[DEBUG] play failed:", src, e);
+async function tryPlay(src) {
+  try {
+    const head = await fetch(src, { method: "HEAD" });
+    if (!head.ok) {
+      console.log("[DEBUG] audio not found:", src, head.status);
       return false;
     }
+    audioEl.src = src;
+    audioEl.load(); // 🔧 明示的にロード
+    audioEl.currentTime = 0;
+    await audioEl.play();
+    return true;
+  } catch (e) {
+    console.warn("[DEBUG] play failed:", src, e);
+    return false;
   }
-
+}
   async function playVoiceWithFallback(baseDir, slot) {
     const names = timeSlotAlias[slot] || [slot];
     const candidates = [];
