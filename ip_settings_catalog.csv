@@ -1,0 +1,54 @@
+﻿区分,セクション,設定項目,キー/値・識別子,候補値 / 型,説明,ファイル/場所,例
+現行設定,A.トークン/ルーティング,トークン→キャラ/IPの紐づけ,"token → {character, ip}",文字列→オブジェクト,NFCタグのトークンから表示IPとキャラクターを決定,token-map.json,"{""abc123"":{""character"":""alice"",""ip"":""animeA""}}"
+現行設定,A.トークン/ルーティング,起動時クエリパラメータ名,token,文字列,URLの ?token=XXXX を読み取り起動を制御,index.html / main.js,?token=abc123
+現行設定,A.トークン/ルーティング,起動ロジック,"startApp(character, ip)",関数,トークンが有効な場合にアプリを開始,main.js,"startApp('alice','animeA')"
+現行設定,B.キャラ定義,キャラ設定ファイルの場所,characters/{ip}/{character}.json,ファイルパス,IP/キャラごとの表情とセリフ定義を格納,/characters/animeA/alice.json,-
+現行設定,B.キャラ定義,表情マッピング,expressions[timeSlotA],オブジェクト,時間帯A→画像ファイル名の対応,characters/{ip}/{character}.json,"{""morning"":""alice_morning.png""}"
+現行設定,B.キャラ定義,セリフ：時間帯Aキー,timeSlotA,列挙,midnight/early_morning/morning/noon/afternoon/evening,characters/{ip}/{character}.json,timeSlotA:morning
+現行設定,B.キャラ定義,セリフ：体感温度カテゴリ,feelingCategory,列挙,veryhot/hot/warm/cool/cold/verycold,characters/{ip}/{character}.json,feelingCategory:warm
+現行設定,B.キャラ定義,セリフ：曜日キー,weekday,列挙,monday〜sunday,characters/{ip}/{character}.json,weekday:monday
+現行設定,C.画像アセット,キャラ画像配置,img/{ip}/...png,ファイルパス,expressionsで指定したPNGを読み込む,/img/animeA/alice_morning.png,-
+現行設定,C.画像アセット,背景画像命名規則,bg_{timeSlotB}_{weather}.png,ファイル名規則,時間帯B×天気で背景を切替,/img/{ip}/bg_daytime_sunny.png,bg_sunset_rainy.png など
+現行設定,C.画像アセット,時間帯Bキー,timeSlotB,列挙,before_sunrise/daytime/sunset/night,main.js,-
+現行設定,C.画像アセット,天気キー,weather,列挙,sunny/cloudy/rainy/snowy,main.js,-
+現行設定,D.音声,音声ファイル配置,voice/{ip}/{character}/{slot}.wav,ファイルパス,時間帯Aのslot名でwavを再生。なければdefault.wavにフォールバック,/voice/animeA/alice/morning.wav,/voice/animeA/alice/default.wav
+現行設定,D.音声,音声フォーマット優先,format,列挙,wav優先（必要に応じてmp3も可）,main.js,wav → mp3（コメント解除で切替）
+現行設定,D.音声,時間帯別名エイリアス,timeSlotAlias,オブジェクト,early_morning→morning、midnight→night など別名解決,main.js,{'early_morning':'morning'}
+現行設定,E.UI,温度表示要素ID,#temp,DOM要素,右上バッジで温度を表示,index.html / CSS,<div id='temp'>--℃</div>
+現行設定,E.UI,日付表示要素ID,#date,DOM要素,日付を表示,index.html / CSS,<div id='date'>2025/08/18</div>
+現行設定,E.UI,セリフ表示要素ID,#line,DOM要素,セリフバルーン,index.html / CSS,<div id='line'>おはよう！</div>
+現行設定,E.UI,タップ再生対象,"#character-cover, #line, #background, #character, #temp",DOM要素,タップ/クリックでボイス再生,main.js,-
+現行設定,E.UI,長押しメニュー抑止,contextmenu/gesture 禁止,フラグ,スマホ長押しの既定動作を抑止,index.html(末尾スクリプト),-
+現行設定,E.UI,開発者ツール抑止/右クリック禁止,devtools/rclick 禁止,フラグ,必要時のみ有効化（コメントアウト）,index.html(コメント),-
+現行設定,F.環境,天気APIキー,apiKey,文字列,OpenWeatherのAPIキーを指定,main.js,apiKey='YOUR_KEY'
+現行設定,F.環境,位置情報の使用,navigator.geolocation,API,座標取得に失敗した場合はエラー表示,main.js,-
+現行設定,F.環境,拒否画面テンプレート,denied.html,HTML,認可失敗時の差替用（現状は未接続）,/denied.html,-
+現行設定,G.ロジック,時間帯Aの時刻範囲,timeSlotA hours,数値→列挙,0–5:midnight / 6–8:early_morning / 9–11:morning / 12–14:noon / 15–17:afternoon / 18–23:evening,main.js,-
+現行設定,G.ロジック,時間帯Bの判定,sunrise/sunset ±1h,ルール,日の出・日の入り±1hでbefore_sunrise/sunsetを決定,main.js,-
+現行設定,G.ロジック,天気の正規化,weather normalize,ルール,OpenWeather表現をsunny/cloudy/rainy/snowyの4分類へ正規化,main.js,-
+現行設定,G.ロジック,体感温度カテゴリ閾値,feelsLike thresholds,数値,verycold<7 / cold≥7 / cool≥15 / warm≥22 / hot≥30 / veryhot≥35,main.js,-
+現行設定,G.ロジック,曜日キー,weekday,列挙,monday〜sunday,characters/{ip}/{character}.json,-
+追加提案,テーマ,ブランドカラー,--brand-color など,CSS変数,IPごとに色テーマを切替,ip-config.json（新設想定）,--brand-color:#FF6699
+追加提案,テーマ,フォント/ロゴ,fontFamily/logoPath,文字列,IP別のフォント・ロゴ指定,ip-config.json（新設想定）,font:'Noto Sans JP'
+追加提案,テーマ,背景フェード時間,bgFadeMs,数値(ms),背景切替のアニメ時間,ip-config.json（新設想定）,300
+追加提案,テーマ,キャラ立ち位置,characterAnchor,オブジェクト,キャラ画像の上下左右のバランス,ip-config.json（新設想定）,"{'bottom':'5%','right':'0%'}"
+追加提案,UIテキスト,温度バッジの書式,tempFormat,文字列,例: '気温: {temp}℃' のテンプレ,ip-config.json（新設想定）,'気温: {temp}℃'
+追加提案,UIテキスト,日付フォーマット,dateFormat,文字列,和暦/英語など任意フォーマット,ip-config.json（新設想定）,'YYYY/MM/DD (ddd)'
+追加提案,UIテキスト,エラーメッセージ,errorTexts,オブジェクト,位置情報不可/天気取得失敗などの文言,ip-config.json（新設想定）,{'geoDenied':'位置情報が許可されていません'}
+追加提案,サウンド仕様,フォーマット優先度,audioPreference,配列,再生の優先順を指定,ip-config.json（新設想定）,"['wav','mp3']"
+追加提案,サウンド仕様,最大再生回数/クールダウン,cooldown,オブジェクト,連打防止や端末負荷対策,ip-config.json（新設想定）,"{'maxTimes':3,'cooldownMs':2000}"
+追加提案,サウンド仕様,デフォルト音量比,defaultVolume,数値(0-1),端末音量に乗算する係数,ip-config.json（新設想定）,0.8
+追加提案,演出フラグ,パララックスON/OFF,parallax,真偽値,背景の視差効果の切替,ip-config.json（新設想定）,true
+追加提案,演出フラグ,軽量版アニメ切替,liteAnimation,真偽値,低スペック向けにアニメ/演出を抑制,ip-config.json（新設想定）,false
+追加提案,機能スイッチ,バッジ表示可否,showBadges,オブジェクト,日付/温度の個別表示ON/OFF,ip-config.json（新設想定）,"{'date':true,'temp':true}"
+追加提案,機能スイッチ,タップ再生対象要素,tapTargets,配列,タップで再生させる要素を限定,ip-config.json（新設想定）,"['#character','#line']"
+追加提案,機能スイッチ,長押し/右クリック抑止,preventContext,真偽値,抑止の有無を切替,ip-config.json（新設想定）,true
+追加提案,セキュリティ,トークン寿命,tokenTTL,数値(秒),ワンタイム/短期トークン運用の足がかり,ip-config.json（新設想定）,300
+追加提案,セキュリティ,認可失敗時の遷移先,deniedRedirect,文字列(URL/パス),IP別の拒否ページに遷移,ip-config.json（新設想定）,/denied.html?ip=animeA
+追加提案,アセット拡張,季節差分の背景,seasonalBg,配列/規則,spring/summer/autumn/winter で差し替え,ip-config.json（新設想定）,bg_daytime_sunny_summer.png
+追加提案,アセット拡張,イベント差分の背景,eventBg,配列/規則,ハロウィン/クリスマス等の限定演出,ip-config.json（新設想定）,bg_night_snowy_xmas.png
+運用手順,新規IP導入,画像/音声の配置,img/voice ディレクトリ,ファイル配置,規則に従って背景PNG・キャラPNG・WAVを設置,"/img/{ip}/, /voice/{ip}/{character}/","bg_daytime_sunny.png, morning.wav"
+運用手順,新規IP導入,キャラ定義作成,characters/{ip}/{character}.json,JSON,expressions と lines を雛形から作成,/characters/animeA/alice.json,-
+運用手順,新規IP導入,トークン登録,token-map.json,JSON,"{token:{character,ip}} を追加",/token-map.json,"{""xyz789"":{""character"":""clara"",""ip"":""animeB""}}"
+運用手順,新規IP導入,テーマ/文言調整,ip-config.json（任意）,JSON,ブランドごとのテーマや文言を調整,/ip-config.json,--brand-color など
+運用手順,新規IP導入,APIキー差替/デプロイ,main.js / 環境,文字列/手順,apiKey差替後にデプロイ,main.js,apiKey='PROD_KEY'
