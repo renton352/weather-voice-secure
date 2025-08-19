@@ -39,33 +39,34 @@ function startApp(ch, ip) {
     evening: ["evening"]
   };
 
-async function tryPlay(src) {
-  try {
-    const head = await fetch(src, { method: "HEAD" });
-    if (!head.ok) {
-      console.log("[DEBUG] audio not found:", src, head.status);
+  async function tryPlay(src) {
+    try {
+      const head = await fetch(src, { method: "HEAD" });
+      if (!head.ok) {
+        console.log("[DEBUG] audio not found:", src, head.status);
+        return false;
+      }
+      audioEl.src = src;
+      audioEl.load(); // 明示的にロード
+      audioEl.currentTime = 0;
+      await audioEl.play();
+      return true;
+    } catch (e) {
+      console.warn("[DEBUG] play failed:", src, e);
       return false;
     }
-    audioEl.src = src;
-    audioEl.load(); // 🔧 明示的にロード
-    audioEl.currentTime = 0;
-    await audioEl.play();
-    return true;
-  } catch (e) {
-    console.warn("[DEBUG] play failed:", src, e);
-    return false;
   }
-}
+
   async function playVoiceWithFallback(baseDir, slot) {
     const names = timeSlotAlias[slot] || [slot];
     const candidates = [];
     for (const n of names) {
       candidates.push(`${baseDir}${n}.wav`);
-      //candidates.push(`${baseDir}${n}.mp3`);
+      // candidates.push(`${baseDir}${n}.mp3`);
     }
     // 最後にデフォルト
     candidates.push(`${baseDir}default.wav`);
-    //candidates.push(`${baseDir}default.mp3`);
+    // candidates.push(`${baseDir}default.mp3`);
 
     for (const src of candidates) {
       if (await tryPlay(src)) return true;
@@ -75,12 +76,33 @@ async function tryPlay(src) {
   }
   // ===== /Audio 再生ヘルパー =====
 
+  // --- 天気の正規化（背景切替／表示用） ---
+  function normalizeWeather(w) {
+    const s = (w || "").toLowerCase();
+    if (s.includes("rain") || s.includes("thunderstorm") || s.includes("drizzle")) return "rainy";
+    if (s.includes("cloud") || s.includes("mist") || s.includes("fog") || s.includes("haze") ||
+        s.includes("smoke") || s.includes("dust") || s.includes("ash") || s.includes("sand")) return "cloudy";
+    if (s.includes("snow")) return "snowy";
+    return "sunny";
+  }
+  // 日本語表記（バッジ用）
+  function toJapaneseWeather(norm) {
+    switch (norm) {
+      case "sunny":  return "晴れ";
+      case "cloudy": return "くもり";
+      case "rainy":  return "雨";
+      case "snowy":  return "雪";
+      default:       return "—";
+    }
+  }
+
   async function fetchWeather() {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(async position => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ja&appid=${apiKey}`;
+        const url =
+          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ja&appid=${apiKey}`;
         console.log("[DEBUG] weatherAPI:", url);
         try {
           const response = await fetch(url);
@@ -89,7 +111,7 @@ async function tryPlay(src) {
           resolve({
             temp: Math.round(data.main.temp),
             feels_like: Math.round(data.main.feels_like),
-            weather: data.weather[0].main.toLowerCase(),
+            weatherMain: (data.weather && data.weather[0] && data.weather[0].main) ? data.weather[0].main : "",
             sunrise: data.sys.sunrise,
             sunset: data.sys.sunset
           });
@@ -121,14 +143,7 @@ async function tryPlay(src) {
     return "daytime";
   }
 
-  function normalizeWeather(w) {
-    if (w.includes("rain")) return "rainy";
-    if (w.includes("cloud")) return "cloudy";
-    if (w.includes("snow")) return "snowy";
-    return "sunny";
-  }
-
-  function getFeelingCategory(feelsLike){
+  function getFeelingCategory(feelsLike) {
     if (feelsLike >= 35) return "veryhot";
     if (feelsLike >= 30) return "hot";
     if (feelsLike >= 22) return "warm";
@@ -138,7 +153,7 @@ async function tryPlay(src) {
   }
 
   function getWeekdayName(date) {
-    return ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][date.getDay()];
+    return ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][date.getDay()];
   }
 
   async function main() {
@@ -151,23 +166,29 @@ async function tryPlay(src) {
     const character = await res.json();
     console.log("[DEBUG] character JSON:", character);
 
+    // 天気取得
     const weatherData = await fetchWeather();
     const feelsLike = weatherData.feels_like;
     const feelingCategory = getFeelingCategory(feelsLike);
-    document.getElementById("temp").textContent = `気温: ${weatherData.temp}℃`;
 
-{
-  const d = new Date();
-  const w = ["日","月","火","水","木","金","土"][d.getDay()];
-  const txt = `${d.getMonth()+1}月${d.getDate()}日(${w})`;
-  const dateEl = document.getElementById("date");
-  if (dateEl) dateEl.textContent = txt;
-}
+    // --- バッジ表示（気温・日付・天気） ---
+    const tempEl = document.getElementById("temp");
+    if (tempEl) tempEl.textContent = `気温: ${weatherData.temp}℃`;
 
+    { // 日付（端末ローカル）
+      const d = new Date();
+      const w = ["日","月","火","水","木","金","土"][d.getDay()];
+      const txt = `${d.getMonth()+1}月${d.getDate()}日(${w})`;
+      const dateEl = document.getElementById("date");
+      if (dateEl) dateEl.textContent = txt;
+    }
 
+    // 追加：天気バッジ
+    const normalizedWeather = normalizeWeather(weatherData.weatherMain);
+    const weatherEl = document.getElementById("weather");
+    if (weatherEl) weatherEl.textContent = `天気: ${toJapaneseWeather(normalizedWeather)}`;
 
-
-
+    // --- 背景・キャラ切替 ---
     const now = new Date();
     const hour = now.getHours();
     const timeSlotA = getTimeSlotA(hour);
@@ -175,13 +196,15 @@ async function tryPlay(src) {
 
     const currentTime = Math.floor(Date.now() / 1000);
     const timeSlotB = getTimeSlotB(currentTime, weatherData.sunrise, weatherData.sunset);
-    const weather = normalizeWeather(weatherData.weather);
-    const bgPath = `${imgBasePath}bg_${timeSlotB}_${weather}.png`;
-    document.getElementById("background").src = bgPath;
+    const bgPath = `${imgBasePath}bg_${timeSlotB}_${normalizedWeather}.png`;
+    const bgEl = document.getElementById("background");
+    if (bgEl) bgEl.src = bgPath;
 
     const expression = character.expressions[timeSlotA] || `${ch}_normal.png`;
-    document.getElementById("character").src = `${imgBasePath}${expression}`;
+    const charEl = document.getElementById("character");
+    if (charEl) charEl.src = `${imgBasePath}${expression}`;
 
+    // --- セリフ選択 ---
     const values = { timeSlotA, feelingCategory, weekday };
     console.log("[DEBUG] values for line selection:", values);
 
@@ -191,11 +214,12 @@ async function tryPlay(src) {
 
     const lines = character.lines || {};
     const messages = selected.map(key => lines[key]?.[values[key]] || "セリフが見つかりません");
-    document.getElementById("line").textContent = messages.join("\n");
+    const lineEl = document.getElementById("line");
+    if (lineEl) lineEl.textContent = messages.join("\n");
 
-    // === タップ/クリックでボイス再生（回数制限なし / フォールバックあり） ===
+    // --- タップ/クリックでボイス再生（#weatherも追加） ---
     const base = `voice/${ip}/${ch}/`;
-    const targets = ["character-cover", "line", "background", "character", "temp"];
+    const targets = ["character-cover", "line", "background", "character", "temp", "weather"];
     const handler = () => playVoiceWithFallback(base, timeSlotA);
 
     targets.forEach(id => {
